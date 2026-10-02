@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/admin", "destination": "/api/admin" },
+    { "source": "/admin/:path*", "destination": "/api/admin?__path=:path*" }
+  ],
+  "functions": {
+    "api/admin.js": { "includeFiles": "form/admin/**" },
+    "api/waitlist.js": { "maxDuration": 10 }
+  },
+  "headers": [
+    {
+      "source": "/form/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    }
+  ]
+}

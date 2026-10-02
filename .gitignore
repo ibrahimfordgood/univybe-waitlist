@@ -7,3 +7,10 @@ node_modules/
 form/.env
 form/data/*
 !form/data/.gitkeep
+
+# Neon CLI pulls DATABASE_URL into a root .env; keep every env file out of git
+.env
+.env.*
+!.env.example
+!form/.env.example
+.neon/

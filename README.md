@@ -1,24 +1,61 @@
 # UniVybe Waitlist
 
-Waitlist site for univybesl.com. Plain HTML, CSS and JavaScript, plus Three.js (loaded from jsDelivr), with a small Node.js backend in `form/` that stores sign-ups and serves a password-protected `/admin` dashboard. No build step and no npm dependencies.
+Waitlist site for univybesl.com. Plain HTML, CSS and JavaScript, plus Three.js (loaded from jsDelivr), with a small backend that stores sign-ups in a **Neon Postgres** database and serves a password-protected `/admin` dashboard with Excel export. It runs on **Vercel** (serverless functions in `api/`) or locally with `npm start`.
 
 ```
 waitlist/
-├── index.html        page markup
-├── styles.css        design system + layout
-├── main.js           interactions, VYBE voice, XP, form, confetti
-├── scene.js          Three.js hero (clickable 3D XP tokens)
-├── package.json      npm start -> node form/server.js
-├── assets/
-│   ├── fonts/        Peace Sans, Creato Display, Komika Title (woff2 + licences)
-│   └── img/          VYBE cut-outs (transparent webp), favicon
+├── index.html, styles.css, main.js, scene.js   the site
+├── assets/           fonts (+ licences) and VYBE images
+├── api/
+│   ├── waitlist.js   Vercel function: POST /api/waitlist
+│   └── admin.js      Vercel function: /admin/* (login, dashboard, exports)
+├── vercel.json       routes /admin to the admin function
+├── package.json      npm start; depends on @neondatabase/serverless
 └── form/
-    ├── server.js     serves the site, saves sign-ups, runs /admin
-    ├── .env          ADMIN_PASSWORD etc. (not committed; copy from .env.example)
-    ├── .env.example  template for .env
+    ├── server.js     local / Node-host server (site + same handlers)
+    ├── lib/          shared code: app (routes), store (Neon or files), config, exporters
+    ├── xlsx.js       built-in Excel (.xlsx) writer
     ├── admin/        login page + live dashboard
-    └── data/         submissions.json + submissions.csv (not committed)
+    ├── .env          your secrets (not committed; copy from .env.example)
+    └── data/         local-only storage when no database is set (not committed)
 ```
+
+## Where sign-ups are stored
+
+| Setup | Storage |
+|---|---|
+| `DATABASE_URL` set (always on Vercel) | Neon table `waitlist_signups`, created automatically on first use |
+| No `DATABASE_URL` (local only) | `form/data/submissions.json`, plus `submissions.csv` and `submissions.xlsx` copies updated on every sign-up |
+
+Either way, `/admin` has **Export Excel** and **CSV** buttons. They download the full list at that moment.
+
+Each record has:
+`id, joined_at, name, email, phone, school, role, ref_code, referred_by, warmup_xp, source`
+
+Duplicate emails are stored once. Someone who signs up again gets their original referral code back.
+
+## Environment variables
+
+| Name | Required | Notes |
+|---|---|---|
+| `ADMIN_PASSWORD` | yes | Password for `/admin`. Use a long one in production. |
+| `DATABASE_URL` | on Vercel | Neon connection string. The Vercel ↔ Neon integration sets it automatically. |
+| `SESSION_SECRET` | no | Signs admin login cookies. Defaults to a value derived from the password, so changing the password logs everyone out. |
+| `SESSION_HOURS` | no | Admin login lifetime (default 12). |
+| `PORT` | no | Local server port (default 3000). |
+
+Locally these go in `form/.env`. On Vercel, set them in **Project → Settings → Environment Variables**.
+
+## Deploy on Vercel with Neon
+
+1. Import this GitHub repo in Vercel. Framework preset: **Other**. No build command is needed.
+2. Go to **Storage → Create / Connect Database → Neon** and link it to the project. This adds `DATABASE_URL`.
+3. Add `ADMIN_PASSWORD` under **Settings → Environment Variables**.
+4. Redeploy. The site is at `/` and the dashboard at `/admin`. The tables are created on the first sign-up or login.
+
+Notes:
+- Admin logins use signed cookies, and the lockout (5 tries per 15 minutes) is tracked in Neon, so both work across Vercel's serverless instances.
+- The files in `form/` and `api/` hold code only, no secrets or data. All data access goes through `/admin` and requires a login.
 
 ## Run locally
 
@@ -26,64 +63,25 @@ Requires Node.js 20.12 or newer.
 
 ```bash
 cd waitlist
-cp form/.env.example form/.env    # first time only, then set ADMIN_PASSWORD
+npm install                         # first time only (installs the Neon driver)
+cp form/.env.example form/.env      # first time only, then fill it in
 npm start
 ```
 
 - Site: http://localhost:3000
 - Admin: http://localhost:3000/admin
 
-If port 3000 is busy, change `PORT` in `form/.env`.
-
-## How sign-ups are stored
-
-The site's form posts to `/api/waitlist`. Every new sign-up is added to:
-
-- `form/data/submissions.json`, the master record
-- `form/data/submissions.csv`, which opens directly in Excel or Google Sheets
-
-Duplicate emails are not added twice. If someone signs up again they get their original referral code back.
-
-Each record has:
-`id, joined_at, name, email, phone, school, role, ref_code, referred_by, warmup_xp, source`
-
-`ref_code` is the person's share code. `referred_by` is filled when someone arrives via `?ref=CODE`.
-
-The server rate-limits sign-ups (20 per 10 minutes per IP address) and has a hidden honeypot field to catch bots.
+With `DATABASE_URL` in `form/.env`, local sign-ups go to the same Neon database as production. Leave it empty to use local files. If port 3000 is busy, change `PORT`.
 
 ## Admin dashboard (`/admin`)
 
-1. Go to `/admin` and enter the password set in `form/.env` (`ADMIN_PASSWORD`).
-2. You'll see:
-   - totals by role and for the last 24 hours
-   - sign-ups by campus
-   - top referrers
-   - a searchable table of every sign-up
-   - an **Export CSV** button
-3. The dashboard refreshes itself every 10 seconds, so new sign-ups appear without reloading.
-
-Security:
-- **Sessions:** last 12 hours (`SESSION_HOURS`). The cookie is HttpOnly and SameSite=Strict.
-- **Lockout:** after 5 login attempts in 15 minutes from the same IP address.
-- **Hidden from search engines:** admin pages are `noindex` and have a strict content-security policy.
-- **Not publicly reachable:** `form/`, `.env`, the data files and all dotfiles are never served.
-
-Change the password: edit `ADMIN_PASSWORD` in `form/.env` and restart the server. Pick a long, unique password before going live. A numeric password is easy to guess.
-
-## Deploy
-
-The site now needs a host that runs Node.js, for example Render, Railway, Fly.io or a VPS. A purely static host like Netlify or GitHub Pages can't save sign-ups.
-
-1. Push this repo, then create a Node web service with start command `npm start`.
-2. Set the environment variables `ADMIN_PASSWORD`, `PORT` (usually provided by the host) and `SECURE_COOKIES=true`, since production runs on HTTPS.
-3. Attach a **persistent disk** mounted at `form/data`. Otherwise sign-ups are lost when the host redeploys or restarts.
-4. Point univybesl.com at the service.
-
-Back up `form/data/submissions.json` regularly. You can also download a copy any time with **Export CSV** in `/admin`.
-
-### Prefer a static host instead?
-
-Set `CONFIG.endpoint` in `main.js` to a Google Apps Script web app or a Formspree URL. With `format: 'apps-script'`, the Apps Script receives the same JSON fields as above. In that case `/admin` isn't used.
+- Totals by role and for the last 24 hours, sign-ups by campus, top referrers, and a searchable table.
+- Refreshes itself every 10 seconds.
+- **Export Excel** (`.xlsx`) and **CSV** downloads.
+- Security:
+  - HttpOnly, SameSite=Strict session cookie (marked Secure on Vercel)
+  - lockout after 5 failed attempts in 15 minutes
+  - pages are `noindex` with a strict content-security policy
 
 ## Brand system used
 
