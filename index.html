@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UniVybe — Chilling with A's | Join the waitlist</title>
+  <meta name="description" content="UniVybe turns your courses into bite-sized lessons, quick quizzes, XP, streaks and campus leaderboards. Launching first in Sierra Leone. Join the waitlist." />
+  <meta name="theme-color" content="#0E0C09" />
+  <meta property="og:title" content="UniVybe — Chilling with A's 😎" />
+  <meta property="og:description" content="Learning made fun. Bite-sized lessons, XP, streaks and campus leaderboards. Join the waitlist." />
+  <meta property="og:image" content="assets/img/favicon.png" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/png" href="assets/img/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+  <link rel="preload" href="assets/fonts/peace-sans.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/creato-regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/img/vybe-cool.webp" as="image" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    } }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#join">Skip to the waitlist form</a>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <a href="#top" class="brand" aria-label="UniVybe home">
+      <img src="assets/img/vybe-mark-color.webp" alt="" width="34" height="42" />
+      <span>UniVybe</span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#pillars">What it is</a>
+      <a href="#vybe">Meet VYBE</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <span class="xp-hud" id="xpHud" hidden aria-live="polite"><b id="xpCount">0</b> XP</span>
+      <a href="#join" class="btn btn-yellow btn-sm">Join the waitlist</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ============ HERO ============ -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <canvas id="scene" aria-hidden="true"></canvas>
+      <div class="hero-glow" aria-hidden="true"></div>
+
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot"></span> Waitlist open · Launching first in Sierra Leone</p>
+          <h1 id="heroTitle" class="display">
+            <span class="line">Chilling</span>
+            <span class="line">with <em>A's</em><span class="shades" aria-hidden="true">😎</span></span>
+          </h1>
+          <p class="lede">
+            UniVybe turns your courses into bite-sized lessons, quick quizzes, XP, streaks and campus leaderboards.
+            <strong>Study smart. Chill after.</strong>
+          </p>
+
+          <form class="quick-join" id="quickJoin" novalidate>
+            <label for="quickEmail" class="sr-only">Email address</label>
+            <input id="quickEmail" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required />
+            <button type="submit" class="btn btn-yellow">Join the Vybe <span aria-hidden="true">→</span></button>
+          </form>
+          <p class="hint" id="quickHint">Free. No spam. Early Vybers get first access on their campus.</p>
+
+          <ul class="hero-tags" aria-label="Pillars">
+            <li style="--c:var(--blue)">Learn</li>
+            <li style="--c:var(--pink)">Compete</li>
+            <li style="--c:var(--cyan)">Connect</li>
+            <li style="--c:var(--purple)">Grow</li>
+          </ul>
+        </div>
+
+        <div class="hero-art">
+          <img class="hero-vybe" src="assets/img/vybe-cool.webp" alt="VYBE, the UniVybe lightbulb mascot, wearing sunglasses and a graduation cap" width="622" height="1035" />
+          <div class="sticker s-xp" data-depth="1.4"><span class="ico">⚡</span><div><b>+30 XP</b><small>Nice work!</small></div></div>
+          <div class="sticker s-streak" data-depth="0.8"><span class="ico">🔥</span><div><b>7-day streak</b><small>Keep the Vybe alive</small></div></div>
+          <div class="sticker s-rank" data-depth="1.1"><span class="rank">#1</span><div><b>Engineering</b><small>Dept. battle</small></div></div>
+        </div>
+      </div>
+
+      <p class="pop-tip" id="popTip">Psst, tap the floating coins. Free XP. 👀</p>
+      <a href="#manifesto" class="scroll-cue" aria-label="Scroll down"><span></span></a>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>A lesson a day keeps the reference away</span><i>✦</i>
+        <span>Small small, we go reach</span><i>✦</i>
+        <span>No stress. Just progress.</span><i>✦</i>
+        <span>Na one more lesson</span><i>✦</i>
+        <span>Learn. Do. Earn.</span><i>✦</i>
+        <span>No reference, no case</span><i>✦</i>
+        <span>A lesson a day keeps the reference away</span><i>✦</i>
+        <span>Small small, we go reach</span><i>✦</i>
+        <span>No stress. Just progress.</span><i>✦</i>
+        <span>Na one more lesson</span><i>✦</i>
+        <span>Learn. Do. Earn.</span><i>✦</i>
+        <span>No reference, no case</span><i>✦</i>
+      </div>
+    </div>
+
+    <!-- ============ MANIFESTO ============ -->
+    <section class="manifesto" id="manifesto">
+      <p class="kicker">Our whole thing</p>
+      <h2 class="manifesto-text" id="manifestoText">
+        Education doesn't have to be hard. Learning can be fun.
+      </h2>
+      <p class="manifesto-sub">
+        Not another boring LMS. UniVybe is where learning, competition, community and opportunity finally hang out together, built for students in Sierra Leone and growing across Africa.
+      </p>
+    </section>
+
+    <!-- ============ PILLARS ============ -->
+    <section class="pillars" id="pillars" aria-labelledby="pillarsTitle">
+      <div class="section-head">
+        <p class="kicker">What's inside</p>
+        <h2 id="pillarsTitle" class="display-md">Studying, but it plays like a game.</h2>
+      </div>
+
+      <div class="bento">
+        <!-- LEARN -->
+        <article class="card c-learn reveal" style="--c:var(--blue)">
+          <header><span class="chip">01 · Learn</span><h3>Bite-sized lessons that actually stick.</h3></header>
+          <p>Your course, cut into 5-minute lessons with quick quizzes in between. Read it, try it, get it.</p>
+          <div class="ui ui-lesson" aria-hidden="true">
+            <div class="ui-top"><span>Intro to Economics</span><span>Lesson 3 / 8</span></div>
+            <div class="bar"><i style="width:38%"></i></div>
+            <p class="q">If prices go up and demand goes down, that's…</p>
+            <button class="opt" tabindex="-1">Inflation</button>
+            <button class="opt ok" tabindex="-1">Law of demand <b>✓</b></button>
+            <button class="opt" tabindex="-1">Monopoly</button>
+          </div>
+        </article>
+
+        <!-- COMPETE -->
+        <article class="card c-compete reveal" style="--c:var(--pink)">
+          <header><span class="chip">02 · Compete</span><h3>Your department is watching. 👀</h3></header>
+          <p>Earn XP, protect your streak, and climb leaderboards for your class, department and campus.</p>
+          <ol class="ui ui-board" aria-hidden="true">
+            <li class="me"><span class="pos">1</span><span class="who">Engineering</span><span class="pts">12,480 XP</span></li>
+            <li><span class="pos">2</span><span class="who">Law</span><span class="pts">11,902 XP</span></li>
+            <li><span class="pos">3</span><span class="who">Medicine</span><span class="pts">11,340 XP</span></li>
+            <li><span class="pos">4</span><span class="who">Accounting</span><span class="pts">9,875 XP</span></li>
+          </ol>
+          <p class="ui-note">Preview of the in-app leaderboard</p>
+        </article>
+
+        <!-- CONNECT -->
+        <article class="card c-connect reveal" style="--c:var(--cyan)">
+          <header><span class="chip">03 · Connect</span><h3>Do your lesson. Then catch your Vybe.</h3></header>
+          <p>A student feed for campus memes, study squads, announcements and wins. You earned the chill time.</p>
+          <div class="ui ui-post" aria-hidden="true">
+            <div class="post-head"><span class="av" style="--c:var(--purple)">AK</span><div><b>Aminata K.</b><small>Accounting · 2m</small></div></div>
+            <p>Finished all 8 lessons before the CA. VYBE said I'm cooking 😭🔥</p>
+            <div class="post-foot"><span>🔥 48</span><span>💬 12</span><span class="xp">+50 XP</span></div>
+          </div>
+        </article>
+
+        <!-- GROW -->
+        <article class="card c-grow reveal" style="--c:var(--purple)">
+          <header><span class="chip">04 · Grow</span><h3>Every win, saved to your profile.</h3></header>
+          <p>Badges, achievements and progress that add up to a portfolio. Later: credentials and AI-built CVs.</p>
+          <div class="ui ui-badges" aria-hidden="true">
+            <div class="lvl"><span>Level 7</span><div class="bar"><i style="width:72%"></i></div><small>720 / 1000 XP</small></div>
+            <div class="badges">
+              <span title="Streak">🔥</span><span title="Quiz ace">🎯</span><span title="Early bird">🌅</span><span title="Top 10">🏆</span><span class="locked">🔒</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- OPPORTUNITIES -->
+        <article class="card c-opps reveal">
+          <div class="opps-copy">
+            <span class="chip chip-dark">05 · Opportunities · coming later</span>
+            <h3>Learn. Do. <span class="hl">Earn.</span></h3>
+            <p>What you learn becomes what you can show. Internships, scholarships, cross-university competitions and employers who are looking for proven students.</p>
+          </div>
+          <ul class="opps-list" aria-label="Coming later">
+            <li>Internships</li><li>Scholarships</li><li>AI CVs</li><li>Employer discovery</li><li>Cross-campus challenges</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ MEET VYBE ============ -->
+    <section class="vybe" id="vybe" aria-labelledby="vybeTitle">
+      <div class="vybe-inner">
+        <div class="vybe-copy">
+          <p class="kicker kicker-y">Meet the mascot</p>
+          <h2 id="vybeTitle" class="display-md">This is VYBE.<br />Your study buddy with <span class="hl-y">tough love.</span></h2>
+          <p>
+            VYBE celebrates every win, comforts you after a bad quiz, and calls you out when you've been scrolling for two hours.
+            Progress over perfection, always.
+          </p>
+          <div class="vybe-modes" role="group" aria-label="Pick VYBE's mood">
+            <button class="mode is-active" data-mode="hype" aria-pressed="true">Hype me</button>
+            <button class="mode" data-mode="tough" aria-pressed="false">Tough love</button>
+            <button class="mode" data-mode="krio" aria-pressed="false">Krio mode</button>
+            <button class="mode" data-mode="comfort" aria-pressed="false">Bad day</button>
+          </div>
+        </div>
+
+        <div class="vybe-stage">
+          <div class="vybe-halo" id="vybeHalo" aria-hidden="true"></div>
+          <div class="bubble" id="bubble" aria-live="polite">
+            <p id="bubbleText">+30 XP. Nice work! Keep the Vybe alive.</p>
+          </div>
+          <button class="vybe-btn" id="vybeBtn" aria-label="Tap VYBE for another line">
+            <img src="assets/img/vybe-hoodie.webp" alt="VYBE in a black UniVybe hoodie with arms crossed, smiling" width="594" height="1100" loading="lazy" />
+          </button>
+          <p class="tap-hint">Tap VYBE ↑</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HOW IT WORKS ============ -->
+    <section class="steps" aria-labelledby="stepsTitle">
+      <div class="section-head">
+        <p class="kicker">How the waitlist works</p>
+        <h2 id="stepsTitle" class="display-md">Three steps. Zero stress.</h2>
+      </div>
+      <ol class="step-list">
+        <li class="step reveal" style="--c:var(--yellow)">
+          <span class="num">1</span>
+          <h3>Join the waitlist</h3>
+          <p>Drop your email and your campus. Takes about 20 seconds, less time than your last scroll.</p>
+        </li>
+        <li class="step reveal" style="--c:var(--pink)">
+          <span class="num">2</span>
+          <h3>Bring your squad</h3>
+          <p>Share your link with classmates. The more of your department that joins, the sooner your campus unlocks.</p>
+        </li>
+        <li class="step reveal" style="--c:var(--cyan)">
+          <span class="num">3</span>
+          <h3>Get early access</h3>
+          <p>We'll message you when UniVybe goes live at your school. Early Vybers get in first.</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ ROADMAP ============ -->
+    <section class="roadmap" id="roadmap" aria-labelledby="roadTitle">
+      <div class="section-head">
+        <p class="kicker kicker-y">Where this is going</p>
+        <h2 id="roadTitle" class="display-md">Starts with A's.<br />Doesn't stop there.</h2>
+      </div>
+      <ol class="road" id="road">
+        <li style="--c:var(--yellow)"><span class="st">Stage 1</span><b>Learn</b><small>Interactive courses, XP and streaks</small></li>
+        <li style="--c:var(--pink)"><span class="st">Stage 2</span><b>Compete</b><small>Departments, campuses, challenges</small></li>
+        <li style="--c:var(--cyan)"><span class="st">Stage 3</span><b>Connect</b><small>Community and student content</small></li>
+        <li style="--c:var(--purple)"><span class="st">Stage 4</span><b>Grow</b><small>Portfolios, credentials, AI CVs</small></li>
+        <li style="--c:var(--blue)"><span class="st">Stage 5</span><b>Opportunities</b><small>Jobs, internships, scholarships</small></li>
+        <li style="--c:var(--yellow)"><span class="st">Stage 6</span><b>Africa</b><small>One learning network, one continent</small></li>
+      </ol>
+    </section>
+
+    <!-- ============ JOIN ============ -->
+    <section class="join" id="join" aria-labelledby="joinTitle">
+      <div class="join-inner">
+        <div class="join-copy">
+          <h2 id="joinTitle" class="display-lg">Join<br />the Vybe.</h2>
+          <p>Be first on your campus. We'll only message you about launch and early access.</p>
+          <img class="join-vybe" src="assets/img/vybe-grad.webp" alt="" width="613" height="1100" loading="lazy" />
+        </div>
+
+        <div class="form-card" id="formCard">
+          <form id="joinForm" novalidate>
+            <div class="field">
+              <label for="name">First name</label>
+              <input id="name" name="name" autocomplete="given-name" placeholder="Fatmata" required />
+              <span class="err" data-for="name"></span>
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@email.com" required />
+              <span class="err" data-for="email"></span>
+            </div>
+            <div class="field">
+              <label for="phone">WhatsApp number <span class="opt-l">(optional)</span></label>
+              <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+232 76 000 000" />
+              <span class="err" data-for="phone"></span>
+            </div>
+            <div class="field">
+              <label for="school">Your school</label>
+              <select id="school" name="school" required>
+                <option value="" disabled selected>Pick your campus</option>
+                <option>Fourah Bay College (USL)</option>
+                <option>College of Medicine &amp; Allied Health Sciences (USL)</option>
+                <option>IPAM (USL)</option>
+                <option>Njala University</option>
+                <option>University of Makeni (UNIMAK)</option>
+                <option>Ernest Bai Koroma University of Science &amp; Technology</option>
+                <option>Eastern Technical University</option>
+                <option>Milton Margai Technical University</option>
+                <option>Limkokwing University Sierra Leone</option>
+                <option>Other university or college</option>
+                <option>Secondary school</option>
+              </select>
+              <span class="err" data-for="school"></span>
+            </div>
+            <fieldset class="field roles">
+              <legend>I'm joining as</legend>
+              <label><input type="radio" name="role" value="student" checked /><span>🎓 Student</span></label>
+              <label><input type="radio" name="role" value="educator" /><span>📚 Educator</span></label>
+              <label><input type="radio" name="role" value="institution" /><span>🏛️ Institution</span></label>
+            </fieldset>
+            <input type="text" name="company" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <button type="submit" class="btn btn-ink btn-block" id="submitBtn">
+              <span class="label">Join the Vybe</span><span class="spinner" aria-hidden="true"></span>
+            </button>
+            <p class="form-msg" id="formMsg" role="alert"></p>
+          </form>
+
+          <div class="success" id="success" hidden tabindex="-1">
+            <img src="assets/img/vybe-cool.webp" alt="" width="120" height="200" />
+            <h3>You're in the Vybe, <span id="successName">friend</span>! 😎</h3>
+            <p id="successText">We'll let you know the moment UniVybe opens on your campus.</p>
+            <p class="share-label">Bring your squad. Your department won't top the board by itself.</p>
+            <div class="share">
+              <a class="btn btn-wa" id="shareWa" target="_blank" rel="noopener">Share on WhatsApp</a>
+              <button class="btn btn-ghost" id="copyLink" type="button">Copy link</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="faq" id="faq" aria-labelledby="faqTitle">
+      <div class="section-head">
+        <p class="kicker">Questions</p>
+        <h2 id="faqTitle" class="display-md">You asked. VYBE answered.</h2>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>What is UniVybe, exactly?</summary>
+          <p>A learning platform that turns your courses into short, interactive lessons with quizzes, XP, streaks, leaderboards and a student feed. It starts with learning and grows into portfolios, credentials and real opportunities.</p>
+        </details>
+        <details>
+          <summary>Is it free to join the waitlist?</summary>
+          <p>Yes. Joining the waitlist is free and you can leave any time. We'll share details on plans and pricing before launch.</p>
+        </details>
+        <details>
+          <summary>When does it launch?</summary>
+          <p>We're launching campus by campus, starting in Sierra Leone. Waitlist members hear first, and campuses with the most sign-ups unlock first.</p>
+        </details>
+        <details>
+          <summary>I'm a lecturer or run an institution. Is this for me?</summary>
+          <p>Yes. Pick "Educator" or "Institution" on the form. UniVybe gives educators better content tools and engagement insights, and helps institutions bring structured, modern learning online.</p>
+        </details>
+        <details>
+          <summary>Why a lightbulb?</summary>
+          <p>Because every "ohhh, I get it now" moment deserves a glow-up. VYBE glows brighter when you learn, and dims when you've been procrastinating. 👀</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <p class="footer-big">Keep the <span>Vybe</span> alive.</p>
+    <div class="footer-row">
+      <a href="#top" class="brand"><img src="assets/img/vybe-mark-color.webp" alt="" width="28" height="35" loading="lazy" /><span>UniVybe</span></a>
+      <p class="catch">"A lesson a day, keeps the reference away." · VYBE</p>
+      <p class="copy">© <span id="year">2026</span> UniVybe Sierra. Learn. Compete. Connect. Grow.</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="main.js" defer></script>
+  <script type="module" src="scene.js"></script>
+</body>
+</html>
