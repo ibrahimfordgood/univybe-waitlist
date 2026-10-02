@@ -1,72 +1,89 @@
 # UniVybe Waitlist
 
-Static waitlist site for univybesl.com. Plain HTML, CSS and JavaScript, plus Three.js (loaded from jsDelivr). No build step.
+Waitlist site for univybesl.com. Plain HTML, CSS and JavaScript, plus Three.js (loaded from jsDelivr), with a small Node.js backend in `form/` that stores sign-ups and serves a password-protected `/admin` dashboard. No build step and no npm dependencies.
 
 ```
 waitlist/
-├── index.html      page markup
-├── styles.css      design system + layout
-├── main.js         interactions, VYBE voice, XP, form, confetti
-├── scene.js        Three.js hero (clickable 3D XP tokens)
-└── assets/
-    ├── fonts/      Peace Sans, Creato Display, Komika Title (woff2 + licences)
-    └── img/        VYBE cut-outs (transparent webp), favicon
+├── index.html        page markup
+├── styles.css        design system + layout
+├── main.js           interactions, VYBE voice, XP, form, confetti
+├── scene.js          Three.js hero (clickable 3D XP tokens)
+├── package.json      npm start -> node form/server.js
+├── assets/
+│   ├── fonts/        Peace Sans, Creato Display, Komika Title (woff2 + licences)
+│   └── img/          VYBE cut-outs (transparent webp), favicon
+└── form/
+    ├── server.js     serves the site, saves sign-ups, runs /admin
+    ├── .env          ADMIN_PASSWORD etc. (not committed; copy from .env.example)
+    ├── .env.example  template for .env
+    ├── admin/        login page + live dashboard
+    └── data/         submissions.json + submissions.csv (not committed)
 ```
 
 ## Run locally
 
+Requires Node.js 20.12 or newer.
+
 ```bash
 cd waitlist
-python -m http.server 5173     # then open http://localhost:5173
+cp form/.env.example form/.env    # first time only, then set ADMIN_PASSWORD
+npm start
 ```
 
-You need a local server (not `file://`) because `scene.js` is an ES module.
+- Site: http://localhost:3000
+- Admin: http://localhost:3000/admin
 
-## Collect sign-ups (important)
+If port 3000 is busy, change `PORT` in `form/.env`.
 
-The form runs in **demo mode** until you set an endpoint. In demo mode, sign-ups are only saved in the visitor's own browser (`localStorage`).
+## How sign-ups are stored
 
-Open `main.js` and edit `CONFIG`:
+The site's form posts to `/api/waitlist`. Every new sign-up is added to:
 
-```js
-const CONFIG = {
-  endpoint: 'https://script.google.com/macros/s/XXXX/exec',
-  format: 'apps-script',          // or 'json' for Formspree / your own API
-  siteUrl: 'https://univybesl.com',
-};
-```
+- `form/data/submissions.json`, the master record
+- `form/data/submissions.csv`, which opens directly in Excel or Google Sheets
 
-Each sign-up sends:
-`name, email, phone, school, role, ref_code, referred_by, warmup_xp, joined_at, source`
+Duplicate emails are not added twice. If someone signs up again they get their original referral code back.
 
-`ref_code` is the person's share code. `referred_by` is filled when someone arrives via `?ref=CODE`, so you can count referrals per person or per campus.
+Each record has:
+`id, joined_at, name, email, phone, school, role, ref_code, referred_by, warmup_xp, source`
 
-### Option A: Google Sheets (free, about 5 minutes)
+`ref_code` is the person's share code. `referred_by` is filled when someone arrives via `?ref=CODE`.
 
-1. Create a Google Sheet, then go to **Extensions → Apps Script** and paste:
+The server rate-limits sign-ups (20 per 10 minutes per IP address) and has a hidden honeypot field to catch bots.
 
-```js
-function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-  const d = JSON.parse(e.postData.contents);
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['joined_at','name','email','phone','school','role','ref_code','referred_by','warmup_xp','source']);
-  }
-  sheet.appendRow([d.joined_at, d.name, d.email, d.phone, d.school, d.role, d.ref_code, d.referred_by, d.warmup_xp, d.source]);
-  return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
-}
-```
+## Admin dashboard (`/admin`)
 
-2. **Deploy → New deployment → Web app**. Set "Execute as: Me" and "Who has access: Anyone".
-3. Paste the `/exec` URL into `CONFIG.endpoint` and set `format: 'apps-script'`.
+1. Go to `/admin` and enter the password set in `form/.env` (`ADMIN_PASSWORD`).
+2. You'll see:
+   - totals by role and for the last 24 hours
+   - sign-ups by campus
+   - top referrers
+   - a searchable table of every sign-up
+   - an **Export CSV** button
+3. The dashboard refreshes itself every 10 seconds, so new sign-ups appear without reloading.
 
-### Option B: Formspree / your own API
+Security:
+- **Sessions:** last 12 hours (`SESSION_HOURS`). The cookie is HttpOnly and SameSite=Strict.
+- **Lockout:** after 5 login attempts in 15 minutes from the same IP address.
+- **Hidden from search engines:** admin pages are `noindex` and have a strict content-security policy.
+- **Not publicly reachable:** `form/`, `.env`, the data files and all dotfiles are never served.
 
-Set `endpoint` to the form URL and keep `format: 'json'`.
+Change the password: edit `ADMIN_PASSWORD` in `form/.env` and restart the server. Pick a long, unique password before going live. A numeric password is easy to guess.
 
 ## Deploy
 
-Upload the `waitlist/` folder to any static host (Netlify, Vercel, Cloudflare Pages, GitHub Pages, cPanel). Point univybesl.com at it.
+The site now needs a host that runs Node.js, for example Render, Railway, Fly.io or a VPS. A purely static host like Netlify or GitHub Pages can't save sign-ups.
+
+1. Push this repo, then create a Node web service with start command `npm start`.
+2. Set the environment variables `ADMIN_PASSWORD`, `PORT` (usually provided by the host) and `SECURE_COOKIES=true`, since production runs on HTTPS.
+3. Attach a **persistent disk** mounted at `form/data`. Otherwise sign-ups are lost when the host redeploys or restarts.
+4. Point univybesl.com at the service.
+
+Back up `form/data/submissions.json` regularly. You can also download a copy any time with **Export CSV** in `/admin`.
+
+### Prefer a static host instead?
+
+Set `CONFIG.endpoint` in `main.js` to a Google Apps Script web app or a Formspree URL. With `format: 'apps-script'`, the Apps Script receives the same JSON fields as above. In that case `/admin` isn't used.
 
 ## Brand system used
 

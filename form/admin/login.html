@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>UniVybe Admin — Sign in</title>
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+  <link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <img src="/assets/img/vybe-mark-color.webp" alt="" width="64" height="80" class="login-mark" />
+    <h1>Waitlist admin</h1>
+    <p class="muted">Enter the admin password to see who's joined the Vybe.</p>
+    <!--ERROR-->
+    <form method="post" action="/admin/login" autocomplete="off">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required autofocus />
+      <button type="submit" class="btn btn-yellow">Sign in</button>
+    </form>
+    <a href="/" class="back">← Back to the site</a>
+  </main>
+</body>
+</html>

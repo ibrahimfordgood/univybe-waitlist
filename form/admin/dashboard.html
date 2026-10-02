@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>UniVybe Admin — Waitlist</title>
+  <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+  <link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body>
+  <header class="top">
+    <a href="/" class="brand"><img src="/assets/img/vybe-mark-color.webp" alt="" width="28" height="35" /><span>UniVybe</span><em>admin</em></a>
+    <div class="top-right">
+      <span class="live" id="live"><span class="pulse"></span>Live · <span id="updated">loading…</span></span>
+      <a href="/admin/export.csv" class="btn btn-yellow btn-sm">Export CSV</a>
+      <form method="post" action="/admin/logout"><button class="btn btn-ghost btn-sm" type="submit">Log out</button></form>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="stats" aria-label="Summary">
+      <div class="stat stat-main"><span class="label">Total sign-ups</span><b id="sTotal">0</b></div>
+      <div class="stat"><span class="label">Last 24 hours</span><b id="sToday">0</b></div>
+      <div class="stat"><span class="label">Students</span><b id="sStudents">0</b></div>
+      <div class="stat"><span class="label">Educators</span><b id="sEducators">0</b></div>
+      <div class="stat"><span class="label">Institutions</span><b id="sInstitutions">0</b></div>
+      <div class="stat"><span class="label">Joined via referral</span><b id="sRefs">0</b></div>
+    </section>
+
+    <section class="panels">
+      <div class="panel">
+        <h2>By campus</h2>
+        <ol class="bars" id="bySchool"></ol>
+      </div>
+      <div class="panel">
+        <h2>Top referrers</h2>
+        <ol class="refs" id="topRefs"></ol>
+      </div>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="table-head">
+        <h2>All sign-ups <span class="count" id="shown"></span></h2>
+        <div class="filters">
+          <label class="sr-only" for="q">Search</label>
+          <input id="q" type="search" placeholder="Search name, email, phone, campus…" />
+          <label class="sr-only" for="role">Role</label>
+          <select id="role">
+            <option value="">All roles</option>
+            <option value="student">Students</option>
+            <option value="educator">Educators</option>
+            <option value="institution">Institutions</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Joined</th><th>Name</th><th>Email</th><th>WhatsApp</th><th>Campus</th><th>Role</th><th>Ref code</th><th>Referred by</th><th>XP</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <p class="empty" id="empty" hidden>No sign-ups yet. Share the link and they'll show up here automatically.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/admin/dashboard.js"></script>
+</body>
+</html>

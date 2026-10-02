@@ -3,14 +3,14 @@
   'use strict';
 
   /* ---------------------------------------------------------
-     CONFIG: point `endpoint` at your backend to collect sign-ups.
-     - format "json":        POST application/json (Formspree, Supabase edge fn, your API)
-     - format "apps-script": POST text/plain JSON (Google Apps Script web app, avoids CORS preflight)
-     Leave endpoint empty to run in demo mode (saved to this browser only).
-     See README.md for a ready-made Google Sheets script.
+     CONFIG: where sign-ups are sent.
+     - "/api/waitlist" is handled by form/server.js (saves to form/data, visible at /admin)
+     - format "json":        POST application/json (this server, Formspree, your API)
+     - format "apps-script": POST text/plain JSON (Google Apps Script web app)
+     Set endpoint to '' for demo mode (saved to this browser only).
      --------------------------------------------------------- */
   const CONFIG = {
-    endpoint: '',
+    endpoint: '/api/waitlist',
     format: 'json',
     siteUrl: 'https://univybesl.com',
   };
@@ -256,8 +256,15 @@
       headers: asText ? { 'Content-Type': 'text/plain;charset=utf-8' } : { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify(payload),
     });
+    let body = {};
+    try { body = await res.json(); } catch { /* non-JSON response */ }
+    if (res.status === 422 && body.errors) {
+      Object.entries(body.errors).forEach(([field, msg]) => form.elements[field] && setErr(field, msg));
+      throw Object.assign(new Error('Validation failed'), { shown: true });
+    }
+    if (res.status === 429) throw Object.assign(new Error('Rate limited'), { userMsg: 'Too many sign-ups from this network. Try again in a few minutes.' });
     if (!res.ok) throw new Error('Request failed: ' + res.status);
-    try { return await res.json(); } catch { return {}; }
+    return body;
   }
 
   form.addEventListener('submit', async e => {
@@ -283,14 +290,15 @@
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
     try {
-      await send(payload);
-      store.set('uv_joined', { name: payload.name, ref: payload.ref_code, school: payload.school });
-      showSuccess(payload.name, payload.ref_code, payload.school);
+      const resp = await send(payload);
+      const ref = resp.ref_code || payload.ref_code;
+      store.set('uv_joined', { name: payload.name, ref, school: payload.school });
+      showSuccess(payload.name, ref, payload.school);
       window.univybeXP.add(50);
       confetti();
     } catch (err) {
       console.error(err);
-      formMsg.textContent = 'Something went wrong on our side. Check your connection and try again.';
+      if (!err.shown) formMsg.textContent = err.userMsg || 'Something went wrong on our side. Check your connection and try again.';
     } finally {
       submitBtn.classList.remove('loading');
       submitBtn.disabled = false;

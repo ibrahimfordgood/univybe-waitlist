@@ -2,3 +2,8 @@
 Thumbs.db
 .vscode/
 node_modules/
+
+# Waitlist backend: secrets and collected sign-ups stay local
+form/.env
+form/data/*
+!form/data/.gitkeep
